@@ -81,18 +81,20 @@ const QuickView = () => {
                   <h3 className="font-heading text-2xl font-bold text-forest mt-1">{product.title}</h3>
 
                   {/* Rating */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <FiStar
-                          key={i}
-                          size={14}
-                          className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
-                        />
-                      ))}
+                  {Array.isArray(product.reviews) && product.reviews.length > 0 && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <FiStar
+                            key={i}
+                            size={14}
+                            className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-olive font-body">{(product.ratings ?? product.rating ?? 0)} ({product.reviews.length} reviews)</span>
                     </div>
-                    <span className="text-xs text-olive font-body">{(product.ratings ?? product.rating ?? 0)} ({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
-                  </div>
+                  )}
 
                   {/* Price */}
                   <div className="flex items-center gap-3 mt-4">

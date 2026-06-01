@@ -127,18 +127,20 @@ const ProductCard = ({ product, index = 0 }) => {
             </h3>
 
             {/* Rating */}
-            <div className="flex items-center gap-1 mt-1.5 mb-2">
-              <div className="flex items-center gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <FiStar
-                    key={i}
-                    size={12}
-                    className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
-                  />
-                ))}
+            {Array.isArray(product.reviews) && product.reviews.length > 0 && (
+              <div className="flex items-center gap-1 mt-1.5 mb-2">
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <FiStar
+                      key={i}
+                      size={12}
+                      className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] text-olive font-body">({product.reviews.length})</span>
               </div>
-              <span className="text-[10px] text-olive font-body">({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)})</span>
-            </div>
+            )}
 
             {/* Price */}
             <div className="flex items-center gap-2">
