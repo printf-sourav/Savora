@@ -4,3 +4,5 @@ node_modules/
 .idea/
 .vscode/
 *.log
+backend/src/utils/savora-9b46c-firebase-adminsdk-fbsvc-d09896cb92.json
+*firebase*.json
