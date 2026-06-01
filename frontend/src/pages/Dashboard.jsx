@@ -129,11 +129,26 @@ const Dashboard = () => {
       const formData = new FormData(e.currentTarget);
       const profileForm = {
         name: String(formData.get('name') || '').trim(),
+        displayName: String(formData.get('displayName') || '').trim(),
         phone: String(formData.get('phone') || '').trim(),
       };
+      
+      const currentPassword = String(formData.get('currentPassword') || '').trim();
+      const newPassword = String(formData.get('newPassword') || '').trim();
+      const confirmPassword = String(formData.get('confirmPassword') || '').trim();
+
+      if (currentPassword || newPassword || confirmPassword) {
+        profileForm.currentPassword = currentPassword;
+        profileForm.newPassword = newPassword;
+        profileForm.confirmPassword = confirmPassword;
+      }
+
       const res = await authAPI.updateProfile(profileForm);
       dispatch(updateProfile(res.data));
       toast.success('Profile updated successfully');
+      
+      // Clear password fields
+      e.currentTarget.querySelectorAll('input[type="password"]').forEach(input => input.value = '');
     } catch (err) {
       toast.error(err.response?.data?.message || err.message || 'Failed to update profile');
     } finally {
@@ -333,79 +348,84 @@ const Dashboard = () => {
                       <h2 className="font-heading text-xl font-bold text-forest mb-6">Account Details</h2>
 
                       {/* Update Profile Form */}
-                      <form onSubmit={handleUpdateProfile} className="bg-cream/50 border border-gold/20 rounded-2xl p-6 mb-8 mt-4 space-y-4">
-                        <h3 className="font-heading font-semibold text-lg text-forest mb-4">Update Details</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">Name</label>
-                            <input 
-                              name="name"
-                              defaultValue={user.name || ''}
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="Your full name" 
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">Display Name</label>
-                            <input 
-                              name="displayName"
-                              defaultValue={user.displayName || user.name || ''}
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="Name shown on the site" 
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">Current Password</label>
-                            <input 
-                              type="password"
-                              name="currentPassword"
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="Enter current password to change it" 
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">New Password</label>
-                            <input 
-                              type="password"
-                              name="newPassword"
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="New password" 
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">Confirm New Password</label>
-                            <input 
-                              type="password"
-                              name="confirmPassword"
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="Confirm new password" 
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-body font-semibold text-forest mb-1 block">Mobile Number</label>
-                            <input 
-                              name="phone"
-                              defaultValue={user.phone || ''}
-                              className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
-                              placeholder="e.g. +919876543210" 
-                            />
-                          </div>
-                          <div className="md:col-span-2 pt-2">
-                            <p className="text-xs text-olive font-body mb-3">Leave password fields blank if you only want to update your name, display name, or mobile number.</p>
-                            <button 
-                              type="submit" 
-                              disabled={updatingProfile}
-                              className="px-6 py-2.5 bg-forest text-cream rounded-xl font-body text-sm font-semibold hover:bg-forest/90 transition-colors disabled:opacity-50"
-                            >
-                              {updatingProfile ? 'Saving...' : 'Save Changes'}
-                            </button>
+                      <form onSubmit={handleUpdateProfile} className="bg-cream/50 border border-gold/20 rounded-2xl p-6 mb-8 mt-4 space-y-6">
+                        <div>
+                          <h3 className="font-heading font-semibold text-lg text-forest mb-4 pb-2 border-b border-gold/10">Personal Information</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">Name</label>
+                              <input 
+                                name="name"
+                                defaultValue={user.name || ''}
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="Your full name" 
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">Display Name</label>
+                              <input 
+                                name="displayName"
+                                defaultValue={user.displayName || user.name || ''}
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="Name shown on the site" 
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">Mobile Number</label>
+                              <input 
+                                name="phone"
+                                defaultValue={user.phone || ''}
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="e.g. +919876543210" 
+                              />
+                            </div>
                           </div>
                         </div>
+
+                        <div>
+                          <h3 className="font-heading font-semibold text-lg text-forest mb-4 pb-2 border-b border-gold/10">Change Password</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">Current Password</label>
+                              <input 
+                                type="password"
+                                name="currentPassword"
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="Enter current password" 
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">New Password</label>
+                              <input 
+                                type="password"
+                                name="newPassword"
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="New password" 
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-body font-semibold text-forest mb-1 block">Confirm New Password</label>
+                              <input 
+                                type="password"
+                                name="confirmPassword"
+                                className="w-full px-4 py-2.5 rounded-xl border border-gold/20 bg-white text-sm font-body focus:border-gold outline-none" 
+                                placeholder="Confirm new password" 
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-2">
+                          <p className="text-xs text-olive font-body mb-3">Leave password fields blank if you only want to update your personal details.</p>
+                          <button 
+                            type="submit" 
+                            disabled={updatingProfile}
+                            className="px-6 py-2.5 bg-forest text-cream rounded-xl font-body text-sm font-semibold hover:bg-forest/90 transition-colors disabled:opacity-50"
+                          >
+                            {updatingProfile ? 'Saving...' : 'Save Changes'}
+                          </button>
+                        </div>
                       </form>
-                      <div className="rounded-2xl border-2 border-gold/15 bg-cream/70 p-6 mb-4">
-                        <p className="font-body font-semibold text-forest text-base">Mobile Number</p>
-                        <p className="font-body text-olive text-sm mt-1">{user.phone || 'Not provided'}</p>
-                      </div>
                     </motion.div>
                   )}
 
