@@ -133,7 +133,7 @@ const ProductCard = ({ product, index = 0 }) => {
                   <FiStar
                     key={i}
                     size={12}
-                    className={i < Math.floor(product.rating) ? 'text-gold fill-gold' : 'text-cream-dark'}
+                    className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
                   />
                 ))}
               </div>

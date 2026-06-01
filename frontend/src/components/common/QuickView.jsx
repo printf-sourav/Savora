@@ -87,11 +87,11 @@ const QuickView = () => {
                         <FiStar
                           key={i}
                           size={14}
-                          className={i < Math.floor(product.rating) ? 'text-gold fill-gold' : 'text-cream-dark'}
+                          className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'}
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-olive font-body">{product.rating} ({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
+                    <span className="text-xs text-olive font-body">{(product.ratings ?? product.rating ?? 0)} ({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
                   </div>
 
                   {/* Price */}

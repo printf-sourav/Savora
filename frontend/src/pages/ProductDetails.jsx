@@ -191,10 +191,10 @@ const ProductDetails = () => {
               <div className="flex items-center gap-3 mt-3">
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <FiStar key={i} size={16} className={i < Math.floor(product.rating || 4.5) ? 'text-gold fill-gold' : 'text-cream-dark'} />
+                    <FiStar key={i} size={16} className={i < Math.floor(product.ratings ?? product.rating ?? 0) ? 'text-gold fill-gold' : 'text-cream-dark'} />
                   ))}
                 </div>
-                <span className="text-sm text-olive font-body">{product.rating || '4.5'}</span>
+                <span className="text-sm text-olive font-body">{(product.ratings ?? product.rating ?? 0).toFixed(1)}</span>
                 <span className="text-sm text-olive/50 font-body">({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
                 <button className="ml-auto p-2 text-olive hover:text-gold transition-colors"><FiShare2 size={18} /></button>
               </div>
