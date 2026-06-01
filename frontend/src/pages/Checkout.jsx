@@ -88,12 +88,13 @@ const Checkout = () => {
     const rzpRes = await paymentAPI.createRazorpayOrder({ amount: finalTotal, orderId: newOrder._id });
     const { razorpayOrderId, amount, currency, key, isMock } = rzpRes.data;
 
-    if (isMock || key === 'mock_key_id') {
+    const isDummyKey = !key || key === 'mock_key_id' || key.startsWith('your_') || key === 'your_razorpay_key_id';
+    if (isMock || isDummyKey) {
       toast.success('Sandbox mode active: simulating payment...', {
         style: { background: '#1E2B24', color: '#F5EFE4', borderRadius: '12px', border: '1px solid rgba(201,166,107,0.3)' }
       });
       await paymentAPI.verifyPayment({
-        razorpayOrderId,
+        razorpayOrderId: razorpayOrderId || `order_mock_${Math.random().toString(36).substring(2, 11)}`,
         razorpayPaymentId: `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
         razorpaySignature: 'mock_signature',
         orderId: newOrder._id,
