@@ -241,7 +241,19 @@ const ProductDetails = () => {
                       <span className="px-6 py-3 font-body text-base font-semibold text-forest border-x-2 border-gold/20">{quantity}</span>
                       <button onClick={() => setQuantity(Math.min(product.stock || 10, quantity + 1))} className="px-4 py-3 text-forest hover:bg-forest hover:text-cream transition-all"><FiPlus size={16} /></button>
                     </div>
-                    <span className="text-xs text-olive font-body">{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</span>
+                    <span className={`text-xs font-body ${
+                      product.stock === 0 
+                        ? 'text-red-500 font-semibold' 
+                        : product.stock < 20 
+                          ? 'text-amber-600 font-semibold' 
+                          : 'text-green-600 font-medium'
+                    }`}>
+                      {product.stock === 0 
+                        ? 'Out of stock' 
+                        : product.stock < 20 
+                          ? `Hurry, only ${product.stock} left!` 
+                          : 'In Stock'}
+                    </span>
                   </div>
                 </div>
 
@@ -307,8 +319,18 @@ const ProductDetails = () => {
                         <p className="font-body font-semibold text-forest">{product.shelfLife}</p>
                       </div>
                       <div className="bg-white rounded-xl p-4 gold-border">
-                        <p className="text-xs text-olive font-body uppercase tracking-wider mb-1">Stock</p>
-                        <p className="font-body font-semibold text-forest">{product.stock} units</p>
+                        <p className="text-xs text-olive font-body uppercase tracking-wider mb-1">Availability</p>
+                        <p className={`font-body font-semibold ${
+                          product.stock === 0 
+                            ? 'text-red-500' 
+                            : product.stock < 20 
+                              ? 'text-amber-600' 
+                              : 'text-green-600'
+                        }`}>{product.stock === 0 
+                          ? 'Out of stock' 
+                          : product.stock < 20 
+                            ? `Only ${product.stock} left` 
+                            : 'In stock'}</p>
                       </div>
                     </div>
                   )}
