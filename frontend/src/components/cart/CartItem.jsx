@@ -23,8 +23,8 @@ const CartItem = ({ item, index }) => {
         className="w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-cream-dark"
       >
         <img
-          src={item.image}
-          alt={item.name}
+          src={item.selectedVariant?.image || item.images?.[0]?.url || item.image || 'https://placehold.co/128x128'}
+          alt={item.name || item.title}
           className="w-full h-full object-cover hover:scale-105 transition-transform"
         />
       </Link>
