@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -33,6 +33,27 @@ const Login = () => {
   const { loading } = useSelector((state) => state.auth);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const verifyToken = params.get('verify');
+    if (verifyToken) {
+      const verify = async () => {
+        try {
+          const res = await authAPI.verifyEmail(verifyToken);
+          toast.success(res.message || 'Email verified successfully! You can now log in.', {
+            style: { background: '#1E2B24', color: '#F5EFE4', borderRadius: '12px', border: '1px solid rgba(201,166,107,0.3)' }
+          });
+          navigate('/login', { replace: true });
+        } catch (err) {
+          toast.error(err.message || 'Verification failed. Invalid or expired token.', {
+            style: { background: '#1E2B24', color: '#F5EFE4', borderRadius: '12px', border: '1px solid rgba(201,166,107,0.3)' }
+          });
+        }
+      };
+      verify();
+    }
+  }, [location.search, navigate]);
 
   const getTargetPath = (user) => {
     if (location.state?.from?.pathname) return location.state.from.pathname;

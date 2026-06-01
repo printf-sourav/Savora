@@ -88,6 +88,27 @@ export const registerUser = asyncHandler(async (req, res) => {
       `,
     });
   } catch (error) {
+    console.error("Email send failed:", error.message);
+    
+    // In development mode or on localhost, don't fail the registration request.
+    // Log the verification URL to the console so the developer can verify.
+    const isDev = process.env.NODE_ENV === "development" || process.env.CLIENT_URL?.includes("localhost");
+    if (isDev) {
+      console.log("\n--------------------------------------------------");
+      console.log("DEVELOPMENT MODE: Verification link for new user:");
+      console.log(`Email: ${user.email}`);
+      console.log(`Link:  ${verifyUrl}`);
+      console.log("--------------------------------------------------\n");
+      
+      return res.status(201).json(
+        new ApiResponse(
+          201,
+          { devVerificationLink: verifyUrl },
+          "Registration successful. (Development: Verification link logged to terminal console)."
+        )
+      );
+    }
+
     user.verificationToken = undefined;
     user.verificationTokenExpiry = undefined;
     await user.save({ validateBeforeSave: false });
