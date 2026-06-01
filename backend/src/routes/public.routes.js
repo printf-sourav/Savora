@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Coupon } from "../models/coupon.model.js";
 import { Category } from "../models/category.model.js";
+import { Product } from "../models/product.model.js";
 
 const router = Router();
 
@@ -60,8 +61,19 @@ router.get(
   "/categories",
   asyncHandler(async (_req, res) => {
     const categories = await Category.find().sort("name");
+    
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (cat) => {
+        const count = await Product.countDocuments({ category: cat._id, isActive: true });
+        return {
+          ...cat.toObject(),
+          itemCount: count,
+        };
+      })
+    );
+
     return res.status(200).json(
-      new ApiResponse(200, categories, "Categories fetched")
+      new ApiResponse(200, categoriesWithCount, "Categories fetched")
     );
   })
 );
