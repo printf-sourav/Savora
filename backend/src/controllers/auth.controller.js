@@ -575,7 +575,8 @@ export const firebaseLogin = asyncHandler(async (req, res) => {
   try {
     decodedToken = await admin.auth().verifyIdToken(idToken);
   } catch (error) {
-    throw new ApiError(401, "Invalid Firebase ID Token");
+    console.error("Firebase ID Token verification failed:", error);
+    throw new ApiError(401, "Invalid Firebase ID Token: " + error.message);
   }
 
   const { email, phone_number, name } = decodedToken;

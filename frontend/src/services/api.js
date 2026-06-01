@@ -27,6 +27,7 @@ API.interceptors.response.use(
       !originalRequest._retry &&
       !originalRequest.url?.includes('/auth/refresh-token') &&
       !originalRequest.url?.includes('/auth/login') &&
+      !originalRequest.url?.includes('/auth/firebase-login') &&
       !originalRequest.url?.includes('/auth/logout')
     ) {
       if (isRefreshing) {
