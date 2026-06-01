@@ -351,25 +351,14 @@ const ProductDetails = () => {
                 </motion.div>
               )}
               {activeTab === 'reviews' && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl">
-                  <div className="flex items-center gap-6 mb-8">
-                    <div className="text-center">
-                      <p className="font-heading text-5xl font-bold text-forest">{product.rating || '4.5'}</p>
-                      <div className="flex gap-0.5 mt-1 justify-center">
-                        {[...Array(5)].map((_, i) => <FiStar key={i} size={14} className={i < Math.floor(product.rating || 4.5) ? 'text-gold fill-gold' : 'text-cream-dark'} />)}
-                      </div>
-                      <p className="text-xs text-olive font-body mt-1">{Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews</p>
-                    </div>
-                  </div>
-                  <p className="text-olive font-body">No reviews yet. Be the first to review!</p>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <ReviewSection productId={product._id} />
                 </motion.div>
               )}
             </div>
           </div>
         </div>
       </motion.div>
-      {/* TASK 5: Real reviews section */}
-      {product && <ReviewSection productId={product._id} />}
     </>
   );
 };
