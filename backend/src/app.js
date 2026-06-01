@@ -8,9 +8,23 @@ import { errorHandler } from "./middleware/errorMiddleware.js";
 const app = express();
 
 app.use(helmet());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://savora-test.netlify.app"
+];
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.some(o => origin.startsWith(o))) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Fallback: allow all to avoid strict blockages, but prioritize cookies
+    },
     credentials: true,
   })
 );

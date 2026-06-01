@@ -39,6 +39,19 @@ const issueTokensAndSetCookies = async (res, user) => {
   return { accessToken, refreshToken };
 };
 
+const getClientOrigin = (req) => {
+  if (req.headers.origin) {
+    return req.headers.origin;
+  }
+  if (req.headers.referer) {
+    try {
+      const parsed = new URL(req.headers.referer);
+      return parsed.origin;
+    } catch (_) {}
+  }
+  return process.env.CLIENT_URL || "http://localhost:5173";
+};
+
 // ─── REGISTER ────────────────────────────────────────────────────────────────
 // @route   POST /api/auth/register
 export const registerUser = asyncHandler(async (req, res) => {
@@ -72,7 +85,8 @@ export const registerUser = asyncHandler(async (req, res) => {
     verificationTokenExpiry: Date.now() + 24 * 60 * 60 * 1000,
   });
 
-  const verifyUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/login?verify=${verificationToken}`;
+  const clientOrigin = getClientOrigin(req);
+  const verifyUrl = `${clientOrigin}/login?verify=${verificationToken}`;
 
   try {
     await sendEmail({
@@ -92,7 +106,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     
     // In development mode or on localhost, don't fail the registration request.
     // Log the verification URL to the console so the developer can verify.
-    const isDev = process.env.NODE_ENV === "development" || process.env.CLIENT_URL?.includes("localhost");
+    const isDev = process.env.NODE_ENV === "development" || verifyUrl.includes("localhost") || clientOrigin.includes("localhost");
     if (isDev) {
       console.log("\n--------------------------------------------------");
       console.log("DEVELOPMENT MODE: Verification link for new user:");
@@ -296,7 +310,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   user.resetPasswordExpiry = Date.now() + 60 * 60 * 1000; // 1 hour
   await user.save({ validateBeforeSave: false });
 
-  const resetUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${rawToken}`;
+  const resetUrl = `${getClientOrigin(req)}/reset-password/${rawToken}`;
 
   try {
     await sendEmail({
