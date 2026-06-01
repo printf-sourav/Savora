@@ -91,7 +91,7 @@ const QuickView = () => {
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-olive font-body">{product.rating} ({product.reviews} reviews)</span>
+                    <span className="text-xs text-olive font-body">{product.rating} ({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
                   </div>
 
                   {/* Price */}

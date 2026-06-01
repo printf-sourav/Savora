@@ -195,7 +195,7 @@ const ProductDetails = () => {
                   ))}
                 </div>
                 <span className="text-sm text-olive font-body">{product.rating || '4.5'}</span>
-                <span className="text-sm text-olive/50 font-body">({product.reviews || 0} reviews)</span>
+                <span className="text-sm text-olive/50 font-body">({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews)</span>
                 <button className="ml-auto p-2 text-olive hover:text-gold transition-colors"><FiShare2 size={18} /></button>
               </div>
 
@@ -358,7 +358,7 @@ const ProductDetails = () => {
                       <div className="flex gap-0.5 mt-1 justify-center">
                         {[...Array(5)].map((_, i) => <FiStar key={i} size={14} className={i < Math.floor(product.rating || 4.5) ? 'text-gold fill-gold' : 'text-cream-dark'} />)}
                       </div>
-                      <p className="text-xs text-olive font-body mt-1">{product.reviews || 0} reviews</p>
+                      <p className="text-xs text-olive font-body mt-1">{Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)} reviews</p>
                     </div>
                   </div>
                   <p className="text-olive font-body">No reviews yet. Be the first to review!</p>

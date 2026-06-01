@@ -137,7 +137,7 @@ const ProductCard = ({ product, index = 0 }) => {
                   />
                 ))}
               </div>
-              <span className="text-[10px] text-olive font-body">({product.reviews})</span>
+              <span className="text-[10px] text-olive font-body">({Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)})</span>
             </div>
 
             {/* Price */}
