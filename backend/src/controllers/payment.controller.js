@@ -26,6 +26,24 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     throw new ApiError(400, "amount and orderId are required");
   }
 
+  // Check if we should use mock payment mode (if keys are dummy placeholders)
+  const isMock = !process.env.RAZORPAY_KEY_ID || 
+                 process.env.RAZORPAY_KEY_ID === "your_razorpay_key_id" || 
+                 process.env.RAZORPAY_KEY_ID.startsWith("your_");
+
+  if (isMock) {
+    const mockOrderId = `order_mock_${crypto.randomBytes(8).toString("hex")}`;
+    return res.status(200).json(
+      new ApiResponse(200, {
+        razorpayOrderId: mockOrderId,
+        amount: Math.round(amount * 100),
+        currency: "INR",
+        key: "mock_key_id",
+        isMock: true,
+      }, "Razorpay mock order created")
+    );
+  }
+
   const razorpay = getRazorpayInstance();
 
   const razorpayOrder = await razorpay.orders.create({
@@ -40,6 +58,7 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       key: process.env.RAZORPAY_KEY_ID,
+      isMock: false,
     }, "Razorpay order created")
   );
 });
@@ -57,6 +76,27 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 
   if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature || !orderId) {
     throw new ApiError(400, "All payment fields are required");
+  }
+
+  // Handle mock verification
+  if (razorpayOrderId.startsWith("order_mock_") || razorpaySignature === "mock_signature") {
+    // Mark order as paid
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        paymentStatus: "COMPLETED",
+        paymentId: razorpayPaymentId || `pay_mock_${crypto.randomBytes(8).toString("hex")}`,
+      },
+      { new: true }
+    );
+
+    if (!order) {
+      throw new ApiError(404, "Order not found");
+    }
+
+    return res.status(200).json(
+      new ApiResponse(200, { order }, "Mock payment verified and order updated successfully")
+    );
   }
 
   // HMAC SHA256 signature verification
